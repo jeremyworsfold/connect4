@@ -3,8 +3,6 @@ from connect4.terminal import ColorTerminal, BWTerminal
 from connect4.players import Human, Rand
 
 
-
-
 if __name__ == "__main__":
     b = Board()
     display = BWTerminal()
