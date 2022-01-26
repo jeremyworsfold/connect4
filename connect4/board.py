@@ -8,19 +8,21 @@ class Piece(Enum):
     YELLOW = 'Y'
 
 class Board:
-    LENGTH = 7
-    HEIGHT = 6
-    WIN_L = 4
+    # number of rows and columns
+    n_c = 7
+    n_r = 6
+    # required length to win
+    four = 4
 
     WinState = namedtuple('WinState', ['is_ended', 'winner'])
 
     def __init__(self) -> None:
-        self.grid = np.full((self.HEIGHT, self.LENGTH), Piece.EMPTY, dtype=Piece)
-        self.input_idx = np.zeros(self.LENGTH, dtype=int)
+        self.grid = np.full((self.n_r, self.n_c), Piece.EMPTY, dtype=Piece)
+        self.input_idx = np.zeros(self.n_c, dtype=int)
         self.last_pos = (0,0)
 
     def add_piece(self, col, piece: Piece) -> None:
-        if self.input_idx[col] >= self.HEIGHT:
+        if self.input_idx[col] >= self.n_r:
             raise ValueError(f"Can't put piece in column {col}.")
         else:
             self.grid[self.input_idx[col],col] = piece
@@ -29,12 +31,12 @@ class Board:
 
     @property
     def valid_moves(self) -> np.ndarray:
-        return self.input_idx < self.HEIGHT
+        return self.input_idx < self.n_c
 
     def _is_winner(self, player_pieces:np.ndarray) -> bool:
         r, c  = self.last_pos
-        L = self.WIN_L
-        C, R = self.LENGTH - 1, self.HEIGHT - 1
+        L = self.four
+        C, R = self.n_c - 1, self.n_r - 1
 
         # check diagonals first, return if win is found
         bottomright = min(R - r, C - c)
