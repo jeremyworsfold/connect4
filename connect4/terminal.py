@@ -8,10 +8,12 @@ class Display(ABC):
 
     @abstractmethod
     def update(self, board: Board) -> None:
+        """Update the display with the latest version of the board"""
         pass 
 
     @abstractmethod
     def end_game(self, board: Board, winstate: WinState) -> None:
+        """Update the display with the final board state and statement of the game result."""
         pass 
 
 
@@ -21,18 +23,20 @@ class Terminal(Display):
         self._start = "| "
         self._end = "|\n"
 
-    def _slots(self, valid_moves):
+    def _slots(self, valid_moves) -> str:
+        """Returns string of the valid columns and blank spaces in place of invalid columns"""
         vals = np.arange(1,len(valid_moves)+1)
-        line = list(np.where(valid_moves,vals," "))
-        line.insert(0," ")
+        line = list(np.where(valid_moves,vals," "))  # if not valid move, put " " in place.
+        line.insert(0," ")  # align with the printed board
         line.append("\n")
         return " ".join(line)
 
     @abstractmethod
     def _item_as_str(self, item:Piece) -> str:
+        """Return representation of a piece to be printed to the terminal"""
         pass
 
-    def update(self, board: Board):
+    def update(self, board: Board) -> None:
         strings = [self._slots(board.valid_moves)]
         flip = np.flipud(board.grid)
 
@@ -51,8 +55,6 @@ class Terminal(Display):
             print(f"The Game is a draw.")
 
 
-
-
 class ColorTerminal(Terminal):
     def __init__(self) -> None:
         super().__init__()
@@ -69,6 +71,7 @@ class ColorTerminal(Terminal):
     def _item_as_str(self, item: Piece) -> str:
         c = self._char[item]
         return f"{c[0]}{c[1]} {self._ENDC}"
+
 
 class BWTerminal(Terminal):
     def __init__(self) -> None:

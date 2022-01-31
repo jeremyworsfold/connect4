@@ -20,14 +20,13 @@ class Board:
     # required length to win
     four = 4
 
-    #WinState = namedtuple('WinState', ['is_ended', 'winner'])
-
     def __init__(self) -> None:
         self.grid = np.full((self.n_r, self.n_c), Piece.EMPTY, dtype=Piece)
         self.input_idx = np.zeros(self.n_c, dtype=int)
         self.last_pos = (0,0)
 
     def add_piece(self, col, piece: Piece) -> None:
+        """Adds a piece to the board in the selected column. Updates the column height."""
         if self.input_idx[col] >= self.n_r:
             raise ValueError(f"Can't put piece in column {col}.")
         else:
@@ -36,18 +35,23 @@ class Board:
             self.input_idx[col] += 1
 
     def update(self, col, piece: Piece) -> WinState:
+        """Adds a piece to the board and does a check on the winstate given the new piece added.
+        Returns: Winstate"""
         self.add_piece(col, piece)
         return self.get_win_state(piece)
 
     @property
     def valid_moves(self) -> np.ndarray:
+        """Returns boolean numpy array of whether a piece can be placed in each column in the range (0,n_c-1)"""
         return self.input_idx < self.n_c
 
     @property
     def valid_inputs(self) -> np.ndarray:
-        return np.arange(1,8)[np.flatnonzero(self.valid_moves)]
+        """Returns numpy array of the allowed columns for piece placement in the range (0,n_c-1) inclusive."""
+        return np.arange(0,self.n_c)[np.flatnonzero(self.valid_moves)]
 
     def _is_winner(self, player_pieces:np.ndarray) -> bool:
+        """Checks if there is a new winner given the location of the current player's pieces."""
         r, c  = self.last_pos
         L = self.four
         C, R = self.n_c - 1, self.n_r - 1
@@ -71,8 +75,8 @@ class Board:
 
 
     def get_win_state(self, player:Piece) -> WinState:
+        """Checks if someone has won and returns Winstate declaring if it has ended and who won."""
         player_pieces = self.grid == player
-        # Win
         if self._is_winner(player_pieces):
             return WinState(True, player)
         # Draw

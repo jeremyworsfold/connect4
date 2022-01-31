@@ -10,8 +10,8 @@ if __name__ == "__main__":
     display.update(b)
     players = Opponents(Human(Piece(Piece.RED)), Rand(Piece(Piece.YELLOW)))
     while not winstate.is_ended:
-        column = players.current.get_action(b)
-        winstate = b.update(int(column), players.current.color)
+        column = players.current.get_action(b.valid_inputs)
+        winstate = b.update(column, players.current.color)
         display.update(b)
         players.swap()
     display.end_game(b, winstate)

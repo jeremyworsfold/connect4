@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import random
 import numpy as np
 # import pygame
 
@@ -11,7 +10,7 @@ class Player(ABC):
         self.color = color
 
     @abstractmethod
-    def get_action(self, board):
+    def get_action(self, valid_inputs: np.ndarray) -> int:
         pass
 
 
@@ -28,23 +27,23 @@ class Opponents:
         return self.p1
 
 class Human(Player):
-    def __init__(self, color: Piece):
+    def __init__(self, color: Piece) -> None:
         super().__init__(color)
 
 
-    def get_action(self, board):
+    def get_action(self, valid_inputs: np.ndarray) -> int:
+        allowed = valid_inputs + 1
         while True:
-            valid_inputs = board.valid_inputs
-            user_input = input(f"Enter a number from {valid_inputs} to place piece. ")
+            user_input = input(f"Enter a number from {allowed} to place piece. ")
             try: 
                 val = int(user_input)
             except ValueError:
                 print("Non-integer input, please input integer or press 'q' to quit")
                 if user_input == 'q': quit()
                 continue
-            if val not in valid_inputs:
+            if val not in allowed:
                 print(f"Cannot enter piece into column {val}. Valid columns are:")
-                print(valid_inputs)
+                print(allowed)
             else:
                 break
         return val-1
@@ -54,6 +53,7 @@ class Human(Player):
 class Rand(Player):
     def __init__(self, color: Piece):
         super().__init__(color)
+        self.rng = np.random.default_rng()
 
-    def get_action(self, board):
-        return random.choice(np.flatnonzero(board.valid_moves))
+    def get_action(self, valid_inputs: np.ndarray) -> int:
+        return self.rng.choice(valid_inputs)
