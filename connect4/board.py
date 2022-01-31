@@ -1,7 +1,6 @@
 from enum import Enum
-import numpy as np
-from collections import namedtuple
 from typing import NamedTuple
+import numpy as np
 
 class Piece(Enum):
     EMPTY = ' '
