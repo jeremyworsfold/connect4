@@ -4,4 +4,8 @@
 
 *.pdf
 *.png
+
+
 chess.py
+connect4/game_.py
+connect4/game.py

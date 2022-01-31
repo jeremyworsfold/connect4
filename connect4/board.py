@@ -1,11 +1,17 @@
 from enum import Enum
 import numpy as np
 from collections import namedtuple
+from typing import NamedTuple
 
 class Piece(Enum):
     EMPTY = ' '
     RED = 'R'
     YELLOW = 'Y'
+
+
+class WinState(NamedTuple):
+    is_ended: bool
+    winner: Piece
 
 class Board:
     # number of rows and columns
@@ -14,7 +20,7 @@ class Board:
     # required length to win
     four = 4
 
-    WinState = namedtuple('WinState', ['is_ended', 'winner'])
+    #WinState = namedtuple('WinState', ['is_ended', 'winner'])
 
     def __init__(self) -> None:
         self.grid = np.full((self.n_r, self.n_c), Piece.EMPTY, dtype=Piece)
@@ -29,9 +35,17 @@ class Board:
             self.last_pos = (self.input_idx[col], col)
             self.input_idx[col] += 1
 
+    def update(self, col, piece: Piece) -> WinState:
+        self.add_piece(col, piece)
+        return self.get_win_state(piece)
+
     @property
     def valid_moves(self) -> np.ndarray:
         return self.input_idx < self.n_c
+
+    @property
+    def valid_inputs(self) -> np.ndarray:
+        return np.arange(1,8)[np.flatnonzero(self.valid_moves)]
 
     def _is_winner(self, player_pieces:np.ndarray) -> bool:
         r, c  = self.last_pos
@@ -60,9 +74,9 @@ class Board:
         player_pieces = self.grid == player
         # Win
         if self._is_winner(player_pieces):
-            return self.WinState(True, player)
+            return WinState(True, player)
         # Draw
         if not self.valid_moves.any():
-            return self.WinState(True, Piece.EMPTY)
+            return WinState(True, Piece.EMPTY)
         # Game is not ended yet.
-        return self.WinState(False, Piece.EMPTY)
+        return WinState(False, Piece.EMPTY)

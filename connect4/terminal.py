@@ -1,14 +1,17 @@
-from dataclasses import dataclass
 import numpy as np
 from abc import ABC, abstractmethod
 from colorama import Fore, init
 
-from connect4.board import Board, Piece
+from connect4.board import Board, Piece, WinState
 
 class Display(ABC):
 
     @abstractmethod
     def update(self, board: Board) -> None:
+        pass 
+
+    @abstractmethod
+    def end_game(self, board: Board, winstate: WinState) -> None:
         pass 
 
 
@@ -39,6 +42,14 @@ class Terminal(Display):
                 strings.append(self._item_as_str(item))
             strings.append(self._end)
         print("".join(strings))
+
+    def end_game(self, board: Board, winstate: WinState) -> None:
+        self.update(board)
+        if winstate.is_ended:
+            print(f"Player {self._item_as_str(winstate.winner)} has just won.")
+        else:
+            print(f"The Game is a draw.")
+
 
 
 

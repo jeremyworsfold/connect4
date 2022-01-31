@@ -1,17 +1,17 @@
-from connect4.board import Board, Piece
+from connect4.board import Board, Piece, WinState
 from connect4.terminal import ColorTerminal, BWTerminal
-from connect4.players import Human, Rand
+from connect4.players import Human, Rand, Opponents
 
 
 if __name__ == "__main__":
     b = Board()
     display = BWTerminal()
+    winstate = WinState(False, Piece(Piece.EMPTY))
     display.update(b)
-    now, prev = 0, 1
-    player = (Human(Piece('R')), Rand(Piece('Y')))
-    while not b.get_win_state(player[prev].color).is_ended:
-        column = player[now].get_action(b)
-        b.add_piece(int(column), player[now].color)
+    players = Opponents(Human(Piece(Piece.RED)), Rand(Piece(Piece.YELLOW)))
+    while not winstate.is_ended:
+        column = players.current.get_action(b)
+        winstate = b.update(int(column), players.current.color)
         display.update(b)
-        prev = now
-        now = 1*(1-now)
+        players.swap()
+    display.end_game(b, winstate)
