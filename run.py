@@ -5,7 +5,7 @@ from connect4.players import Human, Rand, Opponents
 
 if __name__ == "__main__":
     b = Board()
-    display = BWTerminal()
+    display = ColorTerminal()
     winstate = WinState(False, Piece(Piece.EMPTY))
     display.update(b)
     players = Opponents(Human(Piece(Piece.RED)), Rand(Piece(Piece.YELLOW)))

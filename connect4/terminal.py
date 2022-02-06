@@ -4,17 +4,17 @@ from colorama import Fore, init
 
 from connect4.board import Board, Piece, WinState
 
-class Display(ABC):
 
+class Display(ABC):
     @abstractmethod
     def update(self, board: Board) -> None:
         """Update the display with the latest version of the board"""
-        pass 
+        pass
 
     @abstractmethod
     def end_game(self, board: Board, winstate: WinState) -> None:
         """Update the display with the final board state and statement of the game result."""
-        pass 
+        pass
 
 
 class Terminal(Display):
@@ -24,7 +24,7 @@ class Terminal(Display):
         self._end = "|\n"
 
     @abstractmethod
-    def _piece_as_str(self, piece:Piece) -> str:
+    def _piece_as_str(self, piece: Piece) -> str:
         """Return representation of a piece to be printed to the terminal"""
         pass
 
@@ -33,9 +33,11 @@ class Terminal(Display):
 
     def _slots(self, valid_moves: np.ndarray) -> str:
         """Returns string of the valid columns and blank spaces in place of invalid columns"""
-        vals = np.arange(1,len(valid_moves)+1)
-        line = list(np.where(valid_moves,vals," "))  # if not valid move, put " " in place.
-        line.insert(0," ")  # align with the printed board
+        vals = np.arange(1, len(valid_moves) + 1)
+        line = list(
+            np.where(valid_moves, vals, " ")
+        )  # if not valid move, put " " in place.
+        line.insert(0, " ")  # align with the printed board
         line.append("\n")
         return " ".join(line)
 
@@ -55,24 +57,20 @@ class Terminal(Display):
         if winstate.is_ended:
             print(f"Player {self[winstate.winner]} has just won.")
         else:
-            print(f"The Game is a draw.")
+            print("The Game is a draw.")
 
 
 class ColorTerminal(Terminal):
     def __init__(self) -> None:
         super().__init__()
         init()
-        self._char = {
-            Piece.RED : '⬤',
-            Piece.YELLOW : '⬤',
-            Piece.EMPTY : '◯'
-        }
+        self._char = {Piece.P1: "⬤", Piece.P2: "⬤", Piece.EMPTY: "◯"}
         self._col = {
-            Piece.RED : Fore.RED,
-            Piece.YELLOW : Fore.YELLOW,
-            Piece.EMPTY : Fore.BLUE,
+            Piece.P1: Fore.RED,
+            Piece.P2: Fore.YELLOW,
+            Piece.EMPTY: Fore.BLUE,
         }
-        self._ENDC = '\033[0m'
+        self._ENDC = "\033[0m"
         self._start = f"{Fore.BLUE}| {self._ENDC}"
         self._end = f"{Fore.BLUE}|{self._ENDC}\n"
 
@@ -83,11 +81,7 @@ class ColorTerminal(Terminal):
 class BWTerminal(Terminal):
     def __init__(self) -> None:
         super().__init__()
-        self._char = {
-            Piece.RED : '⬤',
-            Piece.YELLOW : '◯',
-            Piece.EMPTY : '_'
-        }
+        self._char = {Piece.P1: "⬤", Piece.P2: "◯", Piece.EMPTY: "_"}
 
     def _piece_as_str(self, piece: Piece) -> str:
         return f"{self._char[piece]} "
