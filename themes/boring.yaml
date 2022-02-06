@@ -1,7 +1,0 @@
-BOARD: [0, 0, 255]
-BACKGROUND: [255, 255, 255]
-P1: [255, 0, 0]
-P2: [255, 255, 0]
-FONT_COL: [0, 0, 0]
-FONT_FAMILY: "OpenSans"
-FONT_SIZE: 22
