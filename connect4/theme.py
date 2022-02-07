@@ -2,6 +2,7 @@ from pydantic import BaseModel, validator
 from typing import Tuple
 import yaml
 from pathlib import Path
+
 from connect4.board import Piece
 
 
@@ -11,15 +12,14 @@ def valid_rgb(tup: Tuple[int, int, int]) -> Tuple[int, int, int]:
     return tup
 
 
-def theme_from_file(file):
-    path = Path.cwd() / 'conf' / 'themes' / f'{file}.yaml'
-    #name = f"{join('themes',file)}.yaml"
+def pygame_theme_from_file(file):
+    path = Path.cwd() / 'conf' / 'pg_themes' / f'{file}.yaml'
     with open(path, 'r') as f:
         configs = yaml.safe_load(f)
-    return Theme(**configs)
+    return PygameTheme(**configs)
 
 
-class Theme(BaseModel):
+class PygameTheme(BaseModel):
     BOARD: Tuple[int, int, int] = (0, 0, 255)
     BACKGROUND: Tuple[int, int, int] = (255, 255, 255)
     P1: Tuple[int, int, int] = (255, 0, 0)

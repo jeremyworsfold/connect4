@@ -1,3 +1,14 @@
+[build-system]
+requires = ["setuptools>=42.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+addopts = "--cov=connect4"
+testpaths = [
+    "tests",
+]
+filterwarnings = ["ignore::DeprecationWarning"]
+
 [tool.mypy]
 mypy_path = "src"
 check_untyped_defs = true
