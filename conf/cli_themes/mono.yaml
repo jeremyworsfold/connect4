@@ -1,0 +1,11 @@
+FORE: none
+BACK: none
+
+P1: none
+P2: none
+EMPTY: none
+
+P1_token: filled
+P2_token: empty
+EMPTY_token: "_"
+ENDC: ""

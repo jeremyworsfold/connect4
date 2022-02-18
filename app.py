@@ -3,7 +3,7 @@ from pathlib import Path
 import yaml
 
 from connect4 import Board, Piece
-from connect4.pg import Theme, PyGame, ScreenHandler, theme_from_file
+from connect4.pg import PyGame, ScreenHandler, pygame_theme_from_file
 from connect4.players import Human, Rand, Opponents
 
 
@@ -13,7 +13,7 @@ class PyGameConfig(BaseModel):
 
     @validator("themename")
     def theme_validation(cls, v: str) -> str:
-        path = Path.cwd() / 'conf' / 'themes' / f"{v}.yaml"
+        path = Path.cwd() / 'conf' / 'pg_themes' / f"{v}.yaml"
         print(path)
         if not path.exists():
             raise FileNotFoundError(f"{v} is not a preset theme.")
@@ -27,7 +27,7 @@ class PyGameConfig(BaseModel):
 
 
 def main(cfg: PyGameConfig):
-    theme = theme_from_file(cfg.themename)
+    theme = pygame_theme_from_file(cfg.themename)
     b = Board()
     players = Opponents(Human(Piece(Piece.P1)), Rand(Piece(Piece.P2)))
     screenhandler = ScreenHandler(theme, cfg.screenwidth)

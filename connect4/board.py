@@ -1,9 +1,9 @@
-from enum import Enum, auto
+from enum import IntEnum, auto
 from typing import NamedTuple
 import numpy as np
 
 
-class Piece(Enum):
+class Piece(IntEnum):
     EMPTY = auto()
     P1 = auto()
     P2 = auto()
@@ -26,16 +26,18 @@ class Board:
         self.input_idx = np.zeros(self.n_c, dtype=int)
         self.last_pos = (-1, -1)
 
-    def add_piece(self, col, piece: Piece) -> None:
+    def add_piece(self, col: int, piece: Piece) -> None:
         """Adds a piece to the board in the selected column. Updates the column height."""
-        if self.input_idx[col] >= self.n_r:
+        if  col > self.n_c or col < 0:
+            raise IndexError(f"Can't put piece in column {col}.")
+        elif self.input_idx[col] >= self.n_r:
             raise ValueError(f"Can't put piece in column {col}.")
         else:
             self.grid[self.input_idx[col], col] = piece
             self.last_pos = (self.input_idx[col], col)
             self.input_idx[col] += 1
 
-    def update(self, col, piece: Piece) -> WinState:
+    def update(self, col: int, piece: Piece) -> WinState:
         """Adds a piece to the board and does a check on the winstate given the new piece added.
         Returns: Winstate"""
         self.add_piece(col, piece)
