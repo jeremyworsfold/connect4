@@ -1,6 +1,6 @@
-FORE: black
+FORE: blue
 BACK: blue
 
-P1: yellow
-P2: red
+P1: red
+P2: yellow
 EMPTY: white

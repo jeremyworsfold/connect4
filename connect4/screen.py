@@ -5,7 +5,7 @@ import numpy as np
 import os
 from pathlib import Path
 
-from connect4.theme import Theme
+from connect4.theme import PygameTheme
 from connect4.board import Piece, WinState
 
 
@@ -14,7 +14,7 @@ def darker(rgb: Tuple[int, int, int]):
 
 
 class ScreenHandler:
-    def __init__(self, theme: Theme, screenwidth: int) -> None:
+    def __init__(self, theme: PygameTheme, screenwidth: int) -> None:
         self.thm = theme
         self.WIDTH = screenwidth
         self.SPACING = int(self.WIDTH / 7)
