@@ -4,9 +4,9 @@ import numpy as np
 
 
 class Piece(IntEnum):
-    EMPTY = auto()
-    P1 = auto()
-    P2 = auto()
+    EMPTY = 0
+    P1 = 1
+    P2 = -1
 
 
 class WinState(NamedTuple):

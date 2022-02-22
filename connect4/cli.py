@@ -36,6 +36,19 @@ back_colors = {
     "none": ""
 }
 
+class CliConfig(BaseModel):
+    themename: str
+    player1: str
+    player2: str
+
+    @validator("themename")
+    def theme_validation(cls, v: str) -> str:
+        path = Path.cwd() / 'conf' / 'cli_themes' / f"{v}.yaml"
+        print(path)
+        if not path.exists():
+            raise FileNotFoundError(f"{v} is not a preset theme.")
+        return v
+
 
 def valid_fore(color: str) -> str:
     if color not in fore_colors:

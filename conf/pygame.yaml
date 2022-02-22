@@ -1,2 +1,5 @@
-screenwidth: 600
-themename: default
+screenwidth: 560
+themename: pinkblue
+
+player1: human
+player2: mcts

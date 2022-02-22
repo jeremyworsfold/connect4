@@ -1,1 +1,4 @@
-themename: classic
+themename: mono
+
+player1: human
+player2: mcts

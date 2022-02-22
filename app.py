@@ -1,43 +1,25 @@
-from pydantic import BaseModel, validator
 from pathlib import Path
 import yaml
 
-from connect4 import Board, Piece
-from connect4.pg import PyGame, ScreenHandler, pygame_theme_from_file
-from connect4.players import Human, Rand, Opponents
+from connect4.pg import PyGame, pygame_theme_from_file, PyGameConfig
+from connect4.players import Opponents
 
 
-class PyGameConfig(BaseModel):
-    themename: str
-    screenwidth: int
-
-    @validator("themename")
-    def theme_validation(cls, v: str) -> str:
-        path = Path.cwd() / 'conf' / 'pg_themes' / f"{v}.yaml"
-        print(path)
-        if not path.exists():
-            raise FileNotFoundError(f"{v} is not a preset theme.")
-        return v
-
-    @validator("screenwidth")
-    def positive_integer(cls, v: int) -> int:
-        if v < 0:
-            raise ValueError(f"{v} needs to be a positive integer")
-        return v
+def load_config():
+    path = Path.cwd() / 'conf' / "pygame.yaml"
+    with open(path) as f:
+        args = yaml.safe_load(f)
+    return PyGameConfig(**args)
 
 
 def main(cfg: PyGameConfig):
     theme = pygame_theme_from_file(cfg.themename)
-    b = Board()
-    players = Opponents(Human(Piece(Piece.P1)), Rand(Piece(Piece.P2)))
-    screenhandler = ScreenHandler(theme, cfg.screenwidth)
-    game = PyGame(players, screenhandler)
-    game.run(b)
+    players = Opponents(cfg.player1, cfg.player2)
+    game = PyGame(players, theme)
+    #game.run(b)
+    game.main()
 
 
 if __name__ == "__main__":
-    path = Path.cwd() / 'conf' / "pygame.yaml"
-    with open(path) as f:
-        args = yaml.safe_load(f)
-    cfg = PyGameConfig(**args)
+    cfg = load_config()
     main(cfg)

@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 import numpy as np
 
-from connect4.board import Piece
+from connect4.board import Piece, Board
+from connect4.mcts import mcts
 
 
 class Player(ABC):
@@ -12,17 +13,26 @@ class Player(ABC):
         self.color = color
 
     @abstractmethod
-    def get_action(self, valid_inputs: np.ndarray) -> int:
+    def get_action(self, b: Board) -> int:
         """Given numpy array of possible integer actions, returns selected action"""
         pass
+
+
+def create_player(name: str, p: Piece) -> Player:
+    if name == "human":
+        return Human(p)
+    elif name == "rand":
+        return Rand(p)
+    elif name == "mcts":
+        return MCTS(p)
 
 
 class Opponents:
     """Creates arena of two players. Allows the selection of the previous and current player"""
 
-    def __init__(self, p1: Player, p2: Player) -> None:
-        self.p1 = p1
-        self.p2 = p2
+    def __init__(self, p1: str, p2: str) -> None:
+        self.p1 = create_player(p1, Piece.P1)
+        self.p2 = create_player(p2, Piece.P2)
 
     def swap(self) -> None:
         """Swap the players so current player is the last player etc"""
@@ -48,8 +58,9 @@ class Human(Player):
     def __init__(self, color: Piece) -> None:
         super().__init__(color)
 
-    def get_action(self, valid_inputs: np.ndarray) -> int:
+    def get_action(self, b: Board) -> int:
         """Given numpy array of possible integer actions, get user to input an action in the array"""
+        valid_inputs = b.valid_inputs
         allowed = valid_inputs + 1
         while True:
             user_input = input(f"Enter a number from {allowed} to place piece. ")
@@ -68,11 +79,22 @@ class Human(Player):
         return val - 1
 
 
+class MCTS(Player):
+    def __init__(self, color: Piece, its=20):
+        super().__init__(color)
+        self.its = its
+
+    def get_action(self, b: Board) -> int:
+        """Given numpy array of possible integer actions, returns randomly selected actions"""
+        action, value = mcts(b, self.color, iterations=self.its)
+        print(value)
+        return action
+
 class Rand(Player):
     def __init__(self, color: Piece):
         super().__init__(color)
         self.rng = np.random.default_rng()
 
-    def get_action(self, valid_inputs: np.ndarray) -> int:
+    def get_action(self, b: Board) -> int:
         """Given numpy array of possible integer actions, returns randomly selected actions"""
-        return int(self.rng.choice(valid_inputs))
+        return int(self.rng.choice(b.valid_inputs))
