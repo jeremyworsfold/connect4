@@ -1,13 +1,15 @@
-from typing import Tuple
 import pygame as pg
 from pathlib import Path
 from queue import Queue
 
 from connect4.board import Piece, WinState
+from connect4.visuals.screen import Screen
 
 
-class TextRenderer:
-    def __init__(self, text_pos, f_family, f_size, f_col, spacing, width, background) -> None:
+class TextHandler:
+    def __init__(
+        self, text_pos, f_family, f_size, f_col, spacing, width, background
+    ) -> None:
         self.text_pos = text_pos
         self.width = width
         self.background = background
@@ -15,11 +17,9 @@ class TextRenderer:
         self.col = f_col
         self.queue = Queue()
         pg.font.init()
-        font_path = Path.cwd() / 'assets' / 'fonts' / f'{f_family}.ttf'
+        font_path = Path.cwd() / "assets" / "fonts" / f"{f_family}.ttf"
         self.font = pg.font.Font(font_path, f_size)
-        self.cols = [
-            self.font.render(f"{i+1}", True, f_col) for i in range(7)
-        ]
+        self.cols = [self.font.render(f"{i+1}", True, f_col) for i in range(7)]
         self.col_positions = [
             (int((i + 0.5) * spacing), int(spacing / 2)) for i in range(7)
         ]
@@ -51,19 +51,15 @@ class TextRenderer:
                 f"Cannot add piece to column {action}", True, self.col
             )
         else:
-            text = self.font.render(
-                "", True, self.col
-            )
+            text = self.font.render("", True, self.col)
         self.queue.put((text, self.text_pos))
 
-    def blit_text(self, screen):
-        #screen = pg.display.get_surface()
-        screen.fill(self.background, (0, 0, self.width, self.height))
+    def blit_text(self, screen: Screen):
         while not self.queue.empty():
             text, pos = self.queue.get()
-            screen.blit(text.convert_alpha(), pos)
+            screen.blit_text(text.convert_alpha(), pos)
 
-    def prompt_and_blit(self, screen, valid_inputs, color):
+    def prompt_and_blit(self, screen: Screen, valid_inputs, color):
         self.highlight_cols(valid_inputs)
         self.prompt_player(color)
         self.blit_text(screen)

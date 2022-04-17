@@ -4,39 +4,39 @@ import yaml
 from pathlib import Path
 
 from connect4.board import Piece
+from connect4.visuals.tokens import RGBColor
 
 
-def valid_rgb(tup: Tuple[int, int, int]) -> Tuple[int, int, int]:
+def valid_rgb(tup: RGBColor) -> RGBColor:
     if any(val < 0 or val > 255 for val in tup):
         raise ValueError("Tuple must contain values in the range 0-255.")
     return tup
 
 
 def pygame_theme_from_file(file):
-    path = Path.cwd() / 'conf' / 'pg_themes' / f'{file}.yaml'
-    with open(path, 'r') as f:
+    path = Path.cwd() / "conf" / "pg_themes" / f"{file}.yaml"
+    with open(path, "r") as f:
         configs = yaml.safe_load(f)
     return PygameTheme(**configs)
 
 
 class PygameTheme(BaseModel):
-    BOARD: Tuple[int, int, int] = (0, 0, 255)
-    BACKGROUND: Tuple[int, int, int] = (255, 255, 255)
-    P1: Tuple[int, int, int] = (255, 0, 0)
-    P2: Tuple[int, int, int] = (255, 255, 0)
-    FONT_COL: Tuple[int, int, int] = (0, 0, 0)
-    FONT_FAMILY: str = "OpenSans"
-    FONT_SIZE: int = 22
+    board: RGBColor = (0, 0, 255)
+    background: RGBColor = (255, 255, 255)
+    P1: RGBColor = (255, 0, 0)
+    P2: RGBColor = (255, 255, 0)
+    f_color: RGBColor = (0, 0, 0)
+    f_family: str = "OpenSans"
+    f_size: int = 22
 
     _rgb_check = validator(
-        "BOARD", "BACKGROUND", "P1", "P2", "FONT_COL", allow_reuse=True
+        "board", "background", "P1", "P2", "f_color", allow_reuse=True
     )(valid_rgb)
 
-    @validator("FONT_FAMILY")
+    @validator("f_family")
     def font_validation(cls, v):
-        path = Path.cwd() / 'assets' / 'fonts' / f"{v}.ttf"
+        path = Path.cwd() / "assets" / "fonts" / f"{v}.ttf"
         if not path.exists():
-        #if f"{v}.ttf" not in path.glob('*.ttf'):
             raise ValueError(f"{v} is not a recognised font by pygame.")
         return v
 
@@ -46,4 +46,4 @@ class PygameTheme(BaseModel):
         elif piece == Piece.P2:
             return self.P2
         else:
-            return self.BACKGROUND
+            return self.background

@@ -1,4 +1,4 @@
-themename: mono
+themename: transparent
 
 player1: human
-player2: mcts
+player2: rand

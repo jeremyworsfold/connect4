@@ -1,7 +1,7 @@
-BOARD: [0, 35, 110]
-BACKGROUND: [210, 255, 255]
+board: [0, 35, 110]
+background: [210, 255, 255]
 P1: [178, 34, 34]
 P2: [255, 255, 43]
-FONT_COL: [0, 35, 110]
-FONT_FAMILY: "Ubuntu"
-FONT_SIZE: 56
+f_color: [0, 35, 110]
+f_family: "Ubuntu"
+f_size: 56

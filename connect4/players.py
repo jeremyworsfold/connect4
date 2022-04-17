@@ -40,18 +40,22 @@ class Opponents:
 
     @property
     def current(self) -> Player:
-        """Get current player"""
         return self.p1
 
     @property
     def next(self) -> Player:
-        """Get next player"""
         return self.p2
 
     @property
     def previous(self) -> Player:
-        """Get previous player"""
         return self.p2
+
+    @property
+    def curr_piece(self) -> Piece:
+        return self.current.color
+
+    def get_action(self, b: Board) -> int:
+        return self.current.get_action(b)
 
 
 class Human(Player):
@@ -89,6 +93,7 @@ class MCTS(Player):
         action, value = mcts(b, self.color, iterations=self.its)
         print(value)
         return action
+
 
 class Rand(Player):
     def __init__(self, color: Piece):

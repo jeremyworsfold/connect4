@@ -16,7 +16,6 @@ def main(cfg: PyGameConfig):
     theme = pygame_theme_from_file(cfg.themename)
     players = Opponents(cfg.player1, cfg.player2)
     game = PyGame(players, theme)
-    #game.run(b)
     game.main()
 
 

@@ -2,4 +2,4 @@ screenwidth: 560
 themename: pinkblue
 
 player1: human
-player2: mcts
+player2: rand

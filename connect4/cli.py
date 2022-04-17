@@ -1,120 +1,8 @@
 import numpy as np
-from colorama import Fore, init, Back
-import yaml
-from pathlib import Path
-from pydantic import BaseModel, validator
 
 from connect4.board import Board, Piece, WinState
-#from connect4.theme import CliTheme
-
-
-init()
-
-fore_colors = {
-    "black": Fore.BLACK,
-    "blue": Fore.BLUE,
-    "cyan": Fore.CYAN,
-    "green": Fore.GREEN,
-    "magenta": Fore.MAGENTA,
-    "white": Fore.WHITE,
-    "red": Fore.RED,
-    "blank": Fore.RESET,
-    "yellow": Fore.YELLOW,
-    "none": ""
-}
-
-back_colors = {
-    "black": Back.BLACK,
-    "blue": Back.BLUE,
-    "cyan": Back.CYAN,
-    "green": Back.GREEN,
-    "magenta": Back.MAGENTA,
-    "white": Back.WHITE,
-    "red": Back.RED,
-    "blank": Back.RESET,
-    "yellow": Back.YELLOW,
-    "none": ""
-}
-
-class CliConfig(BaseModel):
-    themename: str
-    player1: str
-    player2: str
-
-    @validator("themename")
-    def theme_validation(cls, v: str) -> str:
-        path = Path.cwd() / 'conf' / 'cli_themes' / f"{v}.yaml"
-        print(path)
-        if not path.exists():
-            raise FileNotFoundError(f"{v} is not a preset theme.")
-        return v
-
-
-def valid_fore(color: str) -> str:
-    if color not in fore_colors:
-        raise ValueError(f"Tuple must contain a colour from the list: {fore_colors.keys}")
-    return color
-
-
-def theme_from_file(file):
-    path = Path.cwd() / 'conf' / 'cli_themes' / f'{file}.yaml'
-    with open(path, 'r') as f:
-        configs = yaml.safe_load(f)
-    return TerminalTheme(**configs)
-
-
-class TerminalTheme(BaseModel):
-    FORE: str = Fore.WHITE
-    BACK: str = Back.BLACK
-    P1: str = Fore.WHITE
-    P2: str = Fore.WHITE
-    EMPTY: str = Fore.WHITE
-
-    P1_token: str = "filled"
-    P2_token: str = "filled"
-    EMPTY_token: str = "filled"
-
-    tokens = dict(filled="⬤", empty="◯", _="_")
-    ENDC: str = "\033[0m"
-
-    _fore_check = validator(
-        "FORE", "P1", "P2", "EMPTY", allow_reuse=True
-    )(valid_fore)
-
-    @validator("BACK")
-    def valid_back(cls, color):
-        if color not in back_colors:
-            raise ValueError(f"Tuple must contain a colour from the list: {fore_colors.keys}")
-        return color
-
-    @property
-    def back(self):
-        return back_colors[self.BACK]
-    
-    @property
-    def fore(self):
-        return fore_colors[self.FORE]
-
-    @property
-    def start(self):
-        return f"{self.back}{fore_colors[self.FORE]}| {self.ENDC}"
-
-    @property
-    def end(self):
-        return f"{self.back}{fore_colors[self.FORE]}|{self.ENDC}\n"
-
-    def __getitem__(self, piece: Piece):
-        if piece == Piece.P1:
-            token = self.P1_token
-            col = self.P1
-        elif piece == Piece.P2:
-            token = self.P2_token
-            col = self.P2
-        else:
-            token = self.EMPTY_token
-            col = self.EMPTY
-        return fore_colors[col] + self.tokens[token]
-
+from connect4.players import Opponents
+from connect4.configs import TerminalTheme
 
 
 class Terminal:
@@ -157,3 +45,13 @@ class Terminal:
             print(f"Player {self.theme[winstate.winner]}{self._ENDC} has just won.")
         else:
             print("The Game is a draw.")
+
+    def main(self, players: Opponents, b: Board):
+        winstate = WinState(False, Piece(Piece.EMPTY))
+        self.update(b)
+        while not winstate.is_ended:
+            column = players.current.get_action(b)
+            winstate = b.update(column, players.current.color)
+            self.update(b)
+            players.swap()
+        self.end_game(b, winstate)

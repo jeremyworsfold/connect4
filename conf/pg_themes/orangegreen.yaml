@@ -1,7 +1,7 @@
-BOARD: [210, 210, 210]
-BACKGROUND: [241, 241, 241]
+board: [210, 210, 210]
+background: [241, 241, 241]
 P1: [255, 125, 0]
 P2: [0, 181, 162]
-FONT_COL: [100, 100, 100]
-FONT_FAMILY: "Montserrat"
-FONT_SIZE: 56
+f_color: [100, 100, 100]
+f_family: "Montserrat"
+f_size: 56

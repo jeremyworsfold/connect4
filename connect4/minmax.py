@@ -9,16 +9,12 @@ from connect4.score import score_by_line
 import connect4.gridref as gridref
 
 
-ColScore = namedtuple('ColScore', ['c', 'score'])
+ColScore = namedtuple("ColScore", ["c", "score"])
 
 
 class Node:
     # update grid, declare if winner, score func, get valid inputs - make children
-    def __init__(self,
-                 grid: Grid,
-                 parent,
-                 current_player: Piece,
-                 winstate: WinState):
+    def __init__(self, grid: Grid, parent, current_player: Piece, winstate: WinState):
         self.grid = grid
         self.parent = parent
         self.current_player = current_player
@@ -30,7 +26,9 @@ class Node:
 
     def score(self):
         if self.win_state.is_ended:
-            return ColScore(self.grid.last_move.c, self.get_win_state_score(self.current_player))
+            return ColScore(
+                self.grid.last_move.c, self.get_win_state_score(self.current_player)
+            )
         lsts = gridref.get_lines(self.grid.grid)
         score = score_by_line(lsts)
         return ColScore(self.grid.last_move.c, score)
@@ -53,13 +51,13 @@ class Node:
         # flips grid upside down and prints grid
         print()
         for line in np.flipud(self.grid):
-            print('|' + ' '.join([PDICT[p].print for p in line]) + '|')
+            print("|" + " ".join([PDICT[p].print for p in line]) + "|")
 
 
 def minimax(current_node: Node, depth: int, alpha: int, beta: int, player: bool):
 
     if current_node.win_state.is_ended or depth == 0:
-            return current_node.score()
+        return current_node.score()
     elif player:
         current_node.make_children()
         children = sorted(current_node.children, key=lambda x: abs(x - 3))

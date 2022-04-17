@@ -28,7 +28,7 @@ class Board:
 
     def add_piece(self, col: int, piece: Piece) -> None:
         """Adds a piece to the board in the selected column. Updates the column height."""
-        if  col > self.n_c or col < 0:
+        if col > self.n_c or col < 0:
             raise IndexError(f"Can't put piece in column {col}.")
         elif self.input_idx[col] >= self.n_r:
             raise ValueError(f"Can't put piece in column {col}.")
